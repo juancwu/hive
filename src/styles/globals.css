@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply transition-border-color ease-linear duration-100 delay-0 hover:ease-in hover:duration-200;
+  }
+
+  html,
+  body {
+    @apply w-full h-full text-base;
+  }
+
+  body {
+    @apply bg-zinc-900 text-neutral-50;
+  }
+}
+
+@layer components {
+  .link {
+    @apply text-sky-400 cursor-pointer hover:underline;
+  }
+}

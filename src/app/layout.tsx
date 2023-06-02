@@ -1,22 +1,33 @@
-import "./globals.css";
-import { Inter } from "next/font/google";
-import { headers, cookies } from "next/headers";
-import SupabaseProvider from "./supabase-provider";
-import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import '@/styles/globals.css';
+import { cookies } from 'next/headers';
+import localFont from 'next/font/local';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import SupabaseProvider from '@/providers/supabase-provider';
+import { NavBar } from '@/components/client';
+import React from 'react';
 
-const inter = Inter({ subsets: ["latin"] });
+export const notoSansJP = localFont({
+  src: './fonts/NotoSansJP-Variable.ttf',
+  variable: '--font-noto-sans-jp',
+});
+
+export const montserrat = localFont({
+  src: './fonts/Montserrat-Variable.ttf',
+  variable: '--font-montserrat',
+});
+
+export const inter = localFont({
+  src: './fonts/Inter-Variable.ttf',
+  variable: '--font-inter',
+});
 
 export const metadata = {
-  title: "Hive",
-  description: "Electronic hardware inventory and project management tool.",
+  title: 'Hive',
+  description: 'Electronic hardware inventory and project management tool.',
 };
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const supabase = createServerComponentSupabaseClient({ headers, cookies });
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const supabase = createServerComponentClient({ cookies });
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -24,7 +35,12 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SupabaseProvider session={session}>{children}</SupabaseProvider>
+        <SupabaseProvider session={session}>
+          <div className="min-h-full h-full flex flex-col">
+            <NavBar />
+            <div className="pt-10 pb-10 flex-grow">{children}</div>
+          </div>
+        </SupabaseProvider>
       </body>
     </html>
   );
