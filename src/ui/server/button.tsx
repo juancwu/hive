@@ -1,30 +1,29 @@
-'use client';
-
 import React, { FC } from 'react';
 import { VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import { ButtonStyles } from '@/styles/components';
 
-interface ButtonProps extends VariantProps<typeof ButtonStyles> {
-  onClick?: () => void;
+interface _ButtonProps extends VariantProps<typeof ButtonStyles> {
   className?: string;
   children?: React.ReactNode;
   disabled?: boolean;
 }
 
+type ButtonProps = _ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>;
+
 const Button: FC<ButtonProps> = ({
-  onClick,
   disabled,
   size,
   intent,
   className,
   children,
+  ...props
 }) => {
   return (
     <button
       className={twMerge(ButtonStyles({ size, intent, disabled: disabled }), className)}
-      onClick={onClick}
       disabled={!!disabled}
+      {...props}
     >
       <div className="flex items-center justify-center h-full overflow-visible">
         <span className="whitespace-nowrap overflow-hidden h-full flex items-center">

@@ -1,4 +1,4 @@
-import '@/styles/globals.css';
+import '@/styles/css/globals.css';
 import { cookies } from 'next/headers';
 import localFont from 'next/font/local';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';

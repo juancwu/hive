@@ -37,6 +37,7 @@ export default async function ProfilePage() {
       <span>Nickname: {profile['nickname']}</span>
       <span>Created At: {createdAt}</span>
       <span>Updated At: {updatedAt}</span>
+      {/* Could use server sign out component in the future when server actions are stable */}
       <SignOut />
     </div>
   );
