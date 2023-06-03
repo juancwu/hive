@@ -6,7 +6,7 @@ import { twMerge } from 'tailwind-merge';
 
 const inputStyles = cva(
   [
-    'pr-4 pl-4 w-full h-full ring-1 ring-white/10 transition rounded-lg outline-none bg-white/5 text-zinc-400 text-base',
+    'pr-4 pl-4 w-full h-full ring-1 ring-white/10 transition rounded-lg outline-none bg-white/5 placeholder:text-zinc-400 text-white text-base',
   ],
   {
     variants: {
@@ -16,7 +16,7 @@ const inputStyles = cva(
       disabled: {
         true: 'opacity-50 cursor-not-allowed',
         false:
-          'hover:ring-amber-400 focus-visible:shadow-input focus-visible:ring-amber-200 focus-visible:text-amber-200',
+          'hover:ring-amber-400 focus-visible:shadow-input focus-visible:ring-amber-200',
       },
     },
   }
