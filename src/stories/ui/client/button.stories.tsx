@@ -7,7 +7,7 @@ const meta: Meta<typeof Button> = {
   tags: ['autodocs'],
   argTypes: {
     intent: {
-      options: ['primary', 'secondary', 'action', 'danger'],
+      options: ['primary', 'secondary', 'action', 'danger', 'success'],
       control: { type: 'select' },
     },
     disabled: {
@@ -45,6 +45,15 @@ export const Action: ButtonStory = {
     children: 'Button',
     intent: 'action',
     size: 'md',
+  },
+};
+
+export const Success: ButtonStory = {
+  args: {
+    children: 'Button',
+    intent: 'success',
+    size: 'md',
+    disabled: false,
   },
 };
 

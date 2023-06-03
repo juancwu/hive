@@ -79,7 +79,7 @@ const NavBar = () => {
           <div className="hidden lg:flex lg:items-center lg:max-w-xs md:flex-1">
             {session && (
               <button
-                className="bg-white/5 text-zinc-400 rounded-full w-full h-8 gap-2 px-3 ring-1 ring-white/10 transition text-sm flex my-auto items-center hover:ring-white/20"
+                className="bg-white/5 text-zinc-400 rounded-full w-full h-8 gap-2 px-3 ring-2 ring-white/10 transition text-sm flex my-auto items-center hover:ring-white/20"
                 onClick={() => setOpenSearch(true)}
               >
                 <MagnifyingGlassIcon className="h-4 w-4 text-zinc-400" />
@@ -117,7 +117,7 @@ const NavBar = () => {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                   >
-                    <Dialog.Panel className="mx-auto max-w-sm bg-zinc-900 ring-zinc-800 sm:max-w-xl opacity-100 scale-100 overflow-hidden rounded-lg ring-1 ring-white/10">
+                    <Dialog.Panel className="mx-auto max-w-sm bg-zinc-900 ring-zinc-800 sm:max-w-xl opacity-100 scale-100 overflow-hidden rounded-lg ring-2 ring-white/10 shadow">
                       <SearchInput placeholder="Search..." />
                     </Dialog.Panel>
                   </Transition.Child>

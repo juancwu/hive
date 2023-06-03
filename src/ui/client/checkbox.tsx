@@ -6,16 +6,16 @@ import { cva, VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
 const styles = cva(
-  'flex items-center justify-center rounded-md border-2 border-solid border-neutral-700 cursor-pointer hover:border-amber-400',
+  'flex items-center justify-center rounded-md ring-2 ring-zinc-400/20 hover:ring-amber-400 transition duration-200 ease-linear cursor-pointer',
   {
     variants: {
       size: {
-        sm: 'w-5 h-5',
+        sm: 'w-5 h-5 ring-1',
         md: 'w-6 h-6',
         lg: 'w-7 h-7',
       },
       disabled: {
-        true: 'opacity-50 cursor-not-allowed',
+        true: 'opacity-50 cursor-not-allowed bg-white/5 ring-0',
       },
     },
     defaultVariants: {
@@ -40,7 +40,7 @@ const Checkbox: FC<CheckboxProps> = ({ checked, size, onClick, className, disabl
   }, [checked, disabled]);
 
   return (
-    <div onClick={onClick} className={twMerge(styles({ size }), className)}>
+    <div onClick={onClick} className={twMerge(styles({ size, disabled }), className)}>
       {isChecked && <CheckIcon className="text-green-500 w-full h-full" />}
     </div>
   );
