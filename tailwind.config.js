@@ -7,7 +7,7 @@ module.exports = {
         'border-color': 'border-color',
       },
       boxShadow: {
-        input: '0 0 16px 2px rgba(251, 191, 36, 0.5)',
+        input: '0 0 8px 2px rgba(251, 191, 36, 0.5)',
       },
       fontFamily: {
         inter: ['var(--font-inter)', 'sans-serif'],

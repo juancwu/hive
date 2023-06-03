@@ -6,17 +6,16 @@ import { twMerge } from 'tailwind-merge';
 
 const inputStyles = cva(
   [
-    'pr-4 pl-4 w-full h-full ring-1 ring-white/10 transition rounded-lg outline-none bg-white/5 placeholder:text-zinc-400 text-white text-base',
+    'pr-4 pl-4 w-full h-full ring-2 ring-white/10 transition rounded-lg outline-none bg-white/5 placeholder:text-zinc-400 text-white text-base',
+    'hover:ring-amber-400 focus-visible:ring-amber-200',
   ],
   {
     variants: {
       error: {
-        true: 'ring-red-400',
+        true: 'ring-red-500 hover:ring-red-400 focus-visible:ring-red-300',
       },
       disabled: {
-        true: 'opacity-50 cursor-not-allowed',
-        false:
-          'hover:ring-amber-400 focus-visible:shadow-input focus-visible:ring-amber-200',
+        true: 'opacity-50 cursor-not-allowed hover:ring-white/10',
       },
     },
   }
@@ -29,14 +28,28 @@ type ContainerStylesProps = VariantProps<typeof containerStyles>;
 type InputStylesProps = VariantProps<typeof inputStyles>;
 
 type TextInputProps = {
+  /** Shows an asterisk beside the label */
   withAsterisk?: boolean;
+
+  /** Set to true to display error message and set the style to error */
   hasError?: boolean;
+
+  /** Error message to display */
   errorMessage?: string;
+
+  /** Label of input */
   label?: string;
+
+  /** Placeholder text */
   placeholder?: string;
-  type?: string;
+
+  /** Value to set in the input */
   value?: string;
+
+  /** Custom classes, will always override default classes */
   className?: string;
+
+  /** Autofocuses the input when is visible */
   autoFocus?: boolean;
 
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -47,11 +60,11 @@ type TextInputProps = {
   InputStylesProps;
 
 const TextInput: FC<TextInputProps> = ({
-  hasError,
-  errorMessage,
-  label,
+  hasError = false,
+  errorMessage = '',
+  label = '',
+  disabled = false,
   className,
-  disabled,
   ...props
 }) => {
   const uid = useId();
@@ -84,7 +97,7 @@ const TextInput: FC<TextInputProps> = ({
         />
       </div>
       {hasError && errorMessage && (
-        <span className="text-red-400 text-sm">{errorMessage}</span>
+        <span className="text-red-500 text-sm">{errorMessage}</span>
       )}
     </div>
   );
