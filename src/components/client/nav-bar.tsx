@@ -17,7 +17,7 @@ import { getOperatingSystem } from '@/lib/helpers/browser';
 import { useSupabase } from '@/providers';
 
 const routeBaseStyle =
-  'inline-flex items-center text-zinc-400/80 hover:text-zinc-400 transition text-sm font-medium pt-1 px-1 border-transparent border-b-2 hover:border-zinc-400 ml-8';
+  'inline-flex items-center text-zinc-400/80 hover:text-zinc-400 transition text-sm font-medium pt-1 px-1 border-transparent border-b-2 hover:border-zinc-400 ml-8 capitalize';
 const routeStyles = cva(routeBaseStyle, {
   variants: {
     active: {
@@ -54,7 +54,7 @@ const NavBar = () => {
             {/* BRAND NAME */}
             <div className="flex items-center shrink-0">
               <Link href={routes.home}>
-                <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-300">
+                <span className="uppercase text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-300">
                   HIVE
                 </span>
               </Link>
