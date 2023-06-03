@@ -63,6 +63,9 @@ devDependencies:
   '@storybook/testing-library':
     specifier: ^0.0.14-next.2
     version: 0.0.14-next.2
+  '@storybook/theming':
+    specifier: ^7.0.18
+    version: 7.0.18(react-dom@18.2.0)(react@18.2.0)
   '@types/node':
     specifier: 20.2.3
     version: 20.2.3
