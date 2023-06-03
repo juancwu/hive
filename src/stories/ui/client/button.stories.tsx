@@ -1,20 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@/ui/client';
-import SupabaseProvider from '@/providers/supabase-provider';
 
 const meta: Meta<typeof Button> = {
-  title: 'ui/client/button',
+  title: 'ui/client/Button',
   component: Button,
   tags: ['autodocs'],
-  decorators: [
-    (Story) => {
-      return (
-        <SupabaseProvider session={null}>
-          <Story />
-        </SupabaseProvider>
-      );
-    },
-  ],
   argTypes: {
     intent: {
       options: ['primary', 'secondary', 'action', 'danger'],
@@ -32,20 +22,45 @@ const meta: Meta<typeof Button> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Button>;
+type ButtonStory = StoryObj<typeof Button>;
 
-export const Primary: Story = {
-  parameters: {
-    nextjs: {
-      appDirectory: true,
-      navigation: {
-        pathname: '/inventory',
-      },
-    },
-  },
+export const Primary: ButtonStory = {
   args: {
     children: 'Button',
     intent: 'primary',
     size: 'md',
+  },
+};
+
+export const Secondary: ButtonStory = {
+  args: {
+    children: 'Button',
+    intent: 'secondary',
+    size: 'md',
+  },
+};
+
+export const Action: ButtonStory = {
+  args: {
+    children: 'Button',
+    intent: 'action',
+    size: 'md',
+  },
+};
+
+export const Danger: ButtonStory = {
+  args: {
+    children: 'Button',
+    intent: 'danger',
+    size: 'md',
+  },
+};
+
+export const Disabled: ButtonStory = {
+  args: {
+    children: 'Button',
+    intent: 'primary',
+    size: 'md',
+    disabled: true,
   },
 };

@@ -7,8 +7,7 @@ import { twMerge } from 'tailwind-merge';
 const styles = cva(
   [
     'font-medium cursor-pointer border-none rounded-lg text-neutral-900 shadow-transparent transition duration-200 hover:duration-100 ease-linear',
-    'disabled:text-zinc-900 disabled:bg-zinc-700 disabled:cursor-default disabled:hover:bg-zinc-700 disabled:hover:ring-0',
-    'active:translate-y-0.5 active:duration-0 disabled:active:translate-y-0',
+    'active:translate-y-0.5 active:duration-0',
   ],
   {
     variants: {
@@ -25,6 +24,9 @@ const styles = cva(
           'text-zinc-400 ring-1 ring-white/10 bg-white/5 hover:text-white hover:ring-white/25',
         action: 'bg-gradient-to-r from-amber-400 to-amber-300 disabled:opacity-30',
         danger: 'bg-red-400/10 text-red-400 hover:ring-1 hover:ring-red-400',
+      },
+      disabled: {
+        true: 'opacity-30 pointer-events-none text-zinc-400 ring-1 ring-white/10 bg-white/5 hover:text-white hover:ring-white/25',
       },
     },
     defaultVariants: {
@@ -51,7 +53,7 @@ const Button: FC<ButtonProps> = ({
 }) => {
   return (
     <button
-      className={twMerge(styles({ size, intent }), className)}
+      className={twMerge(styles({ size, intent, disabled: disabled }), className)}
       onClick={onClick}
       disabled={!!disabled}
     >
