@@ -20,7 +20,7 @@ const SignOut: FC = () => {
   };
 
   return (
-    <Button onClick={handleSignOut} intent="gradient" disabled={isLoading}>
+    <Button onClick={handleSignOut} intent="secondary" disabled={isLoading}>
       Sign Out
     </Button>
   );

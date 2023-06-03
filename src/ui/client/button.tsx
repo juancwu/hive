@@ -6,25 +6,25 @@ import { twMerge } from 'tailwind-merge';
 
 const styles = cva(
   [
-    'font-semibold cursor-pointer border-none rounded-lg text-neutral-900 shadow-transparent transition-shadow duration-200 ease-linear',
-    'transition-transform duration-100',
+    'font-medium cursor-pointer border-none rounded-lg text-neutral-900 shadow-transparent transition duration-200 hover:duration-100 ease-linear',
+    'disabled:text-zinc-900 disabled:bg-zinc-700 disabled:cursor-default disabled:hover:bg-zinc-700 disabled:hover:ring-0',
+    'active:translate-y-0.5 active:duration-0 disabled:active:translate-y-0',
   ],
   {
     variants: {
       size: {
-        sm: 'py-1 px-2 text-xs rounded-sm',
-        md: 'py-3 px-6 text-base',
-        lg: 'py-3 px-6 text-xl',
+        xs: 'h-8 px-3 text-xs',
+        sm: 'h-9 px-4 text-sm',
+        md: 'h-10 px-5 text-base',
+        lg: 'h-11 px-6 text-xl',
+        xl: 'h-12 px-7 text-2xl',
       },
       intent: {
-        primary: 'bg-amber-400',
-        secondary: 'bg-amber-300',
-        gradient: 'bg-gradient-to-r from-amber-400 to-amber-300',
-        danger: 'bg-red-400',
-      },
-      disabled: {
-        true: 'opacity-50 cursor-not-allowed bg-neutral-700 ',
-        false: 'hover:scale-110',
+        primary: 'bg-amber-400/10 text-amber-400 hover:ring-1 hover:ring-amber-400',
+        secondary:
+          'text-zinc-400 ring-1 ring-white/10 bg-white/5 hover:text-white hover:ring-white/25',
+        action: 'bg-gradient-to-r from-amber-400 to-amber-300 disabled:opacity-30',
+        danger: 'bg-red-400/10 text-red-400 hover:ring-1 hover:ring-red-400',
       },
     },
     defaultVariants: {
@@ -38,6 +38,7 @@ interface ButtonProps extends VariantProps<typeof styles> {
   onClick?: () => void;
   className?: string;
   children?: React.ReactNode;
+  disabled?: boolean;
 }
 
 const Button: FC<ButtonProps> = ({
@@ -50,11 +51,15 @@ const Button: FC<ButtonProps> = ({
 }) => {
   return (
     <button
-      className={twMerge(styles({ size, intent, disabled: !!disabled }), className)}
+      className={twMerge(styles({ size, intent }), className)}
       onClick={onClick}
       disabled={!!disabled}
     >
-      {children}
+      <div className="flex items-center justify-center h-full overflow-visible">
+        <span className="whitespace-nowrap overflow-hidden h-full flex items-center">
+          {children}
+        </span>
+      </div>
     </button>
   );
 };

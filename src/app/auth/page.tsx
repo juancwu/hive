@@ -146,7 +146,7 @@ export default function Auth() {
             <Button
               className="w-40 h-14"
               onClick={handleAuth}
-              intent="gradient"
+              intent="action"
               disabled={isLoading}
             >
               {isSignUp ? 'Sign Up' : 'Sign In'}
