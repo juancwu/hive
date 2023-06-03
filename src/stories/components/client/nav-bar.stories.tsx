@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { NavBar } from '@/components/client';
 import SupabaseProvider from '@/providers/supabase-provider';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function supabaseDecorator(Story: any, session: any) {
   return (
     <SupabaseProvider session={session}>
