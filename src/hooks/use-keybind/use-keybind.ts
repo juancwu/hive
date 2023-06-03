@@ -1,4 +1,7 @@
 import { useLayoutEffect, useEffect, useRef } from 'react';
+
+import { useDeepMemo } from '@/hooks';
+
 import type { RefType, Keybind, KeybindCallback, UseKeybindOptions } from './types';
 import { isMatchingKeybind, isTriggeredInInputNode } from './validators';
 import { parseKeybind } from './parser';
@@ -11,6 +14,7 @@ const keysPressed = new Set<string>();
 
 const defaultOptions: UseKeybindOptions = {
   triggerInInput: false,
+  enabled: true,
 };
 
 export default function useKeybind<T extends HTMLElement>(
@@ -22,7 +26,21 @@ export default function useKeybind<T extends HTMLElement>(
   const hasTriggeredRef = useRef(false);
   const parsedKeybindRef = useRef<Keybind>(parseKeybind(keybind));
 
-  options = { ...defaultOptions, ...options };
+  const optionsMemo = useDeepMemo(
+    { ...defaultOptions, ...options },
+    (current, previous) => {
+      if (typeof current !== 'object' || current === null) return false;
+      if (typeof previous !== 'object' || previous === null) return false;
+
+      return (
+        Object.keys(current).length === Object.keys(previous).length &&
+        Object.keys(current).reduce(
+          (acc, key) => acc && current[key] === previous[key],
+          true
+        )
+      );
+    }
+  );
 
   useSafeLayoutEffect(() => {
     parsedKeybindRef.current = parseKeybind(keybind);
@@ -38,13 +56,23 @@ export default function useKeybind<T extends HTMLElement>(
 
       if (hasTriggeredRef.current) return;
 
-      if (!options?.triggerInInput && isTriggeredInInputNode(event as KeyboardEvent)) {
+      if (
+        !optionsMemo?.triggerInInput &&
+        isTriggeredInInputNode(event as KeyboardEvent)
+      ) {
         return;
       }
 
       if (
         isMatchingKeybind(event as KeyboardEvent, parsedKeybindRef.current, keysPressed)
       ) {
+        if (!optionsMemo?.enabled) {
+          event.stopPropagation();
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          return;
+        }
+
         callback(event as KeyboardEvent, parsedKeybindRef.current);
         hasTriggeredRef.current = true;
       }

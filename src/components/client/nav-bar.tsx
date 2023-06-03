@@ -44,6 +44,7 @@ const NavBar = () => {
 
   useKeybind([isMac ? 'cmd' : 'ctrl', '/'], () => setOpenSearch(!openSearch), {
     triggerInInput: true,
+    enabled: !!session,
   });
 
   return (

@@ -17,6 +17,7 @@ export type KeybindCallback = (
   keybind: Keybind
 ) => void | Promise<void>;
 
-export interface UseKeybindOptions {
+export type UseKeybindOptions = {
   triggerInInput?: boolean;
-}
+  enabled?: boolean;
+} & Record<string, any>;
