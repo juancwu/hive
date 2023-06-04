@@ -21,13 +21,9 @@ const inputStyles = cva(
   }
 );
 
-const containerStyles = cva('relative w-full h-12');
-
-type ContainerStylesProps = VariantProps<typeof containerStyles>;
-
-type InputStylesProps = VariantProps<typeof inputStyles>;
-
-type TextInputProps = {
+interface TextInputProps
+  extends VariantProps<typeof inputStyles>,
+    React.HTMLAttributes<HTMLInputElement> {
   /** Shows an asterisk beside the label */
   withAsterisk?: boolean;
 
@@ -52,12 +48,13 @@ type TextInputProps = {
   /** Autofocuses the input when is visible */
   autoFocus?: boolean;
 
+  type?: string;
+
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-} & ContainerStylesProps &
-  InputStylesProps;
+}
 
 const TextInput: FC<TextInputProps> = ({
   hasError = false,
@@ -83,7 +80,7 @@ const TextInput: FC<TextInputProps> = ({
           </label>
         </>
       )}
-      <div className={twMerge(containerStyles())}>
+      <div className="relative w-full h-12">
         <input
           id={`input-${uid}`}
           aria-labelledby={`label-${uid}`}

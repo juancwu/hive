@@ -1,3 +1,3 @@
-import ButtonStyles from './button';
+import buttonStyles, { iconStyles as buttonIconStyles } from './button.styles';
 
-export { ButtonStyles };
+export { buttonStyles, buttonIconStyles };

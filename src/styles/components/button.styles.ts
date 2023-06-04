@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority';
 
-const styles = cva(
+const mainStyles = cva(
   [
     'font-medium cursor-pointer border-none rounded-lg text-neutral-900 shadow-transparent transition duration-200 hover:duration-100 ease-linear',
     'active:translate-y-0.5 active:duration-0',
@@ -33,4 +33,16 @@ const styles = cva(
   }
 );
 
-export default styles;
+export const iconStyles = cva(['flex items-center justify-center mr-2'], {
+  variants: {
+    size: {
+      xs: 'w-4 h-4',
+      sm: 'w-4 h-4',
+      md: 'w-[18px] h-[18px]',
+      lg: 'w-[22px] h-[22px]',
+      xl: 'w-[26px] h-[26px]',
+    },
+  },
+});
+
+export default mainStyles;

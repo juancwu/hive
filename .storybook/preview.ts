@@ -1,4 +1,4 @@
-import '../src/styles/globals.css';
+import '../src/styles/css/globals.css';
 import type { Preview } from '@storybook/react';
 import { themes } from '@storybook/theming';
 
