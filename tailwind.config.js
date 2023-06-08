@@ -24,6 +24,9 @@ module.exports = {
       padding: {
         26: '6.5rem',
       },
+      screens: {
+        xs: '375px',
+      },
     },
   },
   plugins: [],

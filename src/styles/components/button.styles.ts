@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority';
 
-const mainStyles = cva(
+export const buttonStyles = cva(
   [
     'font-medium cursor-pointer border-none rounded-lg text-neutral-900 shadow-transparent transition duration-200 hover:duration-100 ease-linear',
     'active:translate-y-0.5 active:duration-0',
@@ -33,7 +33,7 @@ const mainStyles = cva(
   }
 );
 
-export const iconStyles = cva(['flex items-center justify-center mr-2'], {
+export const buttonIconStyles = cva(['flex items-center justify-center mr-2'], {
   variants: {
     size: {
       xs: 'w-4 h-4',
@@ -42,7 +42,11 @@ export const iconStyles = cva(['flex items-center justify-center mr-2'], {
       lg: 'w-[22px] h-[22px]',
       xl: 'w-[26px] h-[26px]',
     },
+    onlyIcon: {
+      true: 'mr-0',
+    },
+  },
+  defaultVariants: {
+    size: 'md',
   },
 });
-
-export default mainStyles;
