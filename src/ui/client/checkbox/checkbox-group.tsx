@@ -1,3 +1,5 @@
+'use client';
+
 import React, { FC, useCallback } from 'react';
 import { CheckboxGroupProvider } from './checkbox-group.context';
 

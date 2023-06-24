@@ -28,6 +28,10 @@ export const KEYBOARD_KEY_ALIASES: Record<string, string> = {
   Control: 'ctrl',
   ControlLeft: 'ctrl',
   ControlRight: 'ctrl',
+  ArrowUp: 'up',
+  ArrowLeft: 'left',
+  ArrowRight: 'right',
+  ArrowDown: 'down',
 
   // aliases
   '/': 'slash',

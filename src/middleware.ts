@@ -21,8 +21,6 @@ export async function middleware(req: NextRequest) {
     error,
   } = await supabase.auth.getSession();
   if (error) {
-    // TODO: create a logger that saves error logs to a database
-    console.log(error);
     const redirectURL = req.nextUrl.clone();
     redirectURL.pathname = `${routes.auth}/error`;
     return NextResponse.redirect(redirectURL);

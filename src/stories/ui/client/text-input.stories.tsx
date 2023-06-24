@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { TextInput } from '@/ui/client';
+import { TextInput } from '@/ui/client/text-input';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function wrapWithContainer(Story: any) {

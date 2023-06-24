@@ -1,54 +1,40 @@
 'use client';
 
-import React, { FC, useId } from 'react';
-import { cva, VariantProps } from 'class-variance-authority';
+import React, { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
+import {
+  inputBaseStyles,
+  inputMessageStyles,
+  InputBaseStylesProps,
+} from '@/styles/components/text-input.styles';
+import { useRandomId } from '@/hooks/use-random-id';
 
-const inputStyles = cva(
-  [
-    'pr-4 pl-4 w-full h-full ring-2 ring-white/10 transition rounded-lg outline-none bg-white/5 placeholder:text-zinc-400 text-white text-base',
-    'hover:ring-amber-400 focus-visible:ring-amber-200',
-  ],
-  {
-    variants: {
-      error: {
-        true: 'ring-red-500 hover:ring-red-400 focus-visible:ring-red-300',
-      },
-      disabled: {
-        true: 'opacity-50 cursor-not-allowed hover:ring-white/10',
-      },
-    },
-  }
-);
+type InputElementOmits = 'aria-describedBy' | 'aria-invalid';
 
 interface TextInputProps
-  extends VariantProps<typeof inputStyles>,
-    React.HTMLAttributes<HTMLInputElement> {
-  /** Shows an asterisk beside the label */
-  withAsterisk?: boolean;
-
-  /** Set to true to display error message and set the style to error */
-  hasError?: boolean;
-
-  /** Error message to display */
-  errorMessage?: string;
-
+  extends Omit<InputBaseStylesProps, 'disabled'>,
+    Omit<React.HTMLProps<HTMLInputElement>, InputElementOmits> {
   /** Label of input */
   label?: string;
-
-  /** Placeholder text */
-  placeholder?: string;
-
-  /** Value to set in the input */
-  value?: string;
 
   /** Custom classes, will always override default classes */
   className?: string;
 
-  /** Autofocuses the input when is visible */
-  autoFocus?: boolean;
+  /** The message to show when input is invalid */
+  invalidMessage?: string;
 
-  type?: string;
+  /** Text shown below of input */
+  hint?: string;
+
+  /** renders the invalid message */
+  invalid?: boolean;
+
+  /** Only allow this three because they are text based */
+  type?: 'text' | 'email' | 'password';
+
+  /** Shows an optional text */
+  optional?: boolean;
 
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -56,48 +42,63 @@ interface TextInputProps
   onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
-const TextInput: FC<TextInputProps> = ({
-  hasError = false,
-  errorMessage = '',
-  label = '',
-  disabled = false,
-  className,
-  ...props
-}) => {
-  const uid = useId();
+export const TextInput = forwardRef<HTMLInputElement, TextInputProps>((props, ref) => {
+  const {
+    className,
+    label,
+    id,
+    invalidMessage,
+    hint,
+    invalid,
+    disabled,
+    optional,
+    ...rest
+  } = props;
+
+  const randomIdPrefix = 'text-input';
+  const inputRandomId = useRandomId(randomIdPrefix);
+  const messageId = useRandomId(randomIdPrefix);
+  const optionalTextId = useRandomId(randomIdPrefix);
 
   return (
     <div>
-      {label && (
-        <>
-          <span className="text-neutral-400 mb-2 block">{label}</span>
+      <div className="flex justify-between">
+        {label && (
           <label
-            className="absolute w-0 h-0 overflow-hidden border-0"
-            id={`label-${uid}`}
-            htmlFor={`input-${uid}`}
+            htmlFor={id ?? inputRandomId}
+            className="block text-sm font-medium leading-6 text-white"
           >
             {label}
           </label>
-        </>
-      )}
-      <div className="relative w-full h-12">
-        <input
-          id={`input-${uid}`}
-          aria-labelledby={`label-${uid}`}
-          aria-autocomplete="none"
-          className={twMerge(
-            inputStyles({ error: hasError, disabled: !!disabled }),
-            className
-          )}
-          disabled={!!disabled}
-          {...props}
-        />
+        )}
+        {optional && (
+          <span className="text-sm leading-6 text-zinc-400" id={optionalTextId}>
+            Optional
+          </span>
+        )}
       </div>
-      {hasError && errorMessage && (
-        <span className="text-red-500 text-sm">{errorMessage}</span>
-      )}
+      <div className="relative mt-2 rounded-md shadow-sm">
+        <input
+          ref={ref}
+          id={id ?? inputRandomId}
+          aria-invalid={invalid ? 'true' : 'false'}
+          aria-describedby={`${messageId} ${optionalTextId}`}
+          className={twMerge(inputBaseStyles({ disabled, invalid }), className)}
+          {...rest}
+        />
+        {invalid && (
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+            <ExclamationCircleIcon className="h-5 w-5 text-red-500" aria-hidden="true" />
+          </div>
+        )}
+      </div>
+      {(invalid && invalidMessage) || hint ? (
+        <p className={inputMessageStyles({ invalid })} id={messageId}>
+          {invalid && invalidMessage ? invalidMessage : hint ?? ''}
+        </p>
+      ) : null}
     </div>
   );
-};
+});
 
-export default TextInput;
+TextInput.displayName = '@/ui/client/text-input';

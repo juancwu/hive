@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { NavBar } from '@/components/client';
+import { NavBar } from '@/components/client/nav-bar';
 import SupabaseProvider from '@/providers/supabase-provider';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

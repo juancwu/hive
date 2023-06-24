@@ -1,10 +1,10 @@
 'use client';
 
 import { useSupabase } from '@/providers/supabase-provider';
-import { Button } from '@/ui/client';
+import { Button } from '@/ui/client/button';
 import { FC, useState } from 'react';
 
-const SignOut: FC = () => {
+export const SignOut: FC = () => {
   const [isLoading, setIsloading] = useState(false);
   const { supabase } = useSupabase();
 
@@ -25,5 +25,3 @@ const SignOut: FC = () => {
     </Button>
   );
 };
-
-export default SignOut;

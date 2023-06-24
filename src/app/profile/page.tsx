@@ -2,7 +2,7 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import dayjs from 'dayjs';
-import { SignOut } from '@/components/client';
+import { SignOut } from '@/components/client/sign-out';
 import routes from '@/lib/routes';
 
 export default async function ProfilePage() {

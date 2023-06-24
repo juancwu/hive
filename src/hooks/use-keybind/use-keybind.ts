@@ -1,6 +1,6 @@
 import { useLayoutEffect, useEffect, useRef } from 'react';
 
-import { useDeepMemo } from '@/hooks';
+import { useDeepMemo } from '@/hooks/use-deep-memo';
 
 import type { RefType, Keybind, KeybindCallback, UseKeybindOptions } from './types';
 import { isMatchingKeybind, isTriggeredInInputNode } from './validators';

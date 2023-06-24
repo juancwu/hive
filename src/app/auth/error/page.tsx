@@ -1,4 +1,4 @@
-import { SignOut } from '@/components/client';
+import { SignOut } from '@/components/client/sign-out';
 import { Header, Main } from '@/ui/server';
 
 export default function AuthErrorPage() {

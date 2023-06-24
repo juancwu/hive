@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export default function useRandomId(prefix = '') {
+export function useRandomId(prefix = '') {
   const [id, setId] = useState('');
 
   useEffect(() => {

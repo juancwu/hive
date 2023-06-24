@@ -7,7 +7,7 @@ interface MainProps {
 
 const Main: FC<MainProps> = ({ children }) => {
   return (
-    <main className="pl-8 pr-8 mx-auto max-w-7xl">
+    <main className="px-8 mx-auto max-w-7xl">
       <div className="pt-8 pb-8">{children}</div>
     </main>
   );

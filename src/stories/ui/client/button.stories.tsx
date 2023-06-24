@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
-import { Button } from '@/ui/client';
+import { Button } from '@/ui/client/button';
 
 const meta: Meta<typeof Button> = {
   title: 'ui/client/Button',

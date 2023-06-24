@@ -8,7 +8,7 @@ interface HeaderProps {
 const Header: FC<HeaderProps> = ({ children }) => {
   return (
     <header>
-      <div className="pl-8 pr-8 mx-auto max-w-7xl">
+      <div className="px-8 mx-auto max-w-7xl">
         <h1 className="font-bold md:text-3xl text-2xl">{children}</h1>
       </div>
     </header>

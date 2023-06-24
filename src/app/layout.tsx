@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import localFont from 'next/font/local';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import SupabaseProvider from '@/providers/supabase-provider';
-import { NavBar } from '@/components/client';
+import { NavBar } from '@/components/client/nav-bar';
 import React from 'react';
 
 export const notoSansJP = localFont({

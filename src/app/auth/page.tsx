@@ -3,16 +3,20 @@
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { useSupabase } from '@/providers/supabase-provider';
-import { TextInput, Button } from '@/ui/client';
+import { TextInput } from '@/ui/client/text-input';
+import { Button } from '@/ui/client/button';
+import { Alert } from '@/ui/client/alert';
 
 export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [error, setError] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsloading] = useState(false);
+  const [alertType, setAlertType] = useState<'success' | 'error'>('success');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
 
   const { supabase } = useSupabase();
 
@@ -41,7 +45,6 @@ export default function Auth() {
   useEffect(() => {
     setPassword('');
     setPasswordError('');
-    setError('');
     setEmailError('');
     setEmail('');
   }, [isSignUp]);
@@ -78,11 +81,13 @@ export default function Auth() {
       setEmailError(emailResult.error.issues[0].message);
       return;
     }
+    setEmailError('');
 
     if (!passwordResult.success && isSignUp) {
       setPasswordError(passwordResult.error.issues[0].message);
       return;
     }
+    setPasswordError('');
 
     setIsloading(true);
 
@@ -94,31 +99,45 @@ export default function Auth() {
     }
 
     if (res.error) {
-      setError(res.error.message);
+      setErrorMessage(res.error.message);
+      setAlertType('error');
       setIsloading(false);
+    } else {
+      setAlertType('success');
     }
+    setShowAlert(true);
   };
 
   return (
-    <div className="h-full flex items-center justify-center">
-      <div className="min-w-[360px] max-w-[360px]">
+    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 relative">
+      <Alert
+        className="rounded-none sm:rounded-md absolute top-0 left-1/2 -translate-x-1/2 sm:mx-auto sm:max-w-sm"
+        clearable
+        onDismiss={() => setShowAlert(false)}
+        text={
+          alertType === 'success'
+            ? 'Successfully signed in, redirecting...'
+            : errorMessage
+        }
+        show={showAlert}
+        type={alertType}
+      />
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <header className="text-center w-full">
           <h1 className="text-4xl font-mont font-semibold leading-10">
             {isSignUp ? 'Sign Up' : 'Sign In'}
           </h1>
-          {error && (
-            <span className="font-noto block text-sm text-red-400 my-1">{error}</span>
-          )}
         </header>
         <main>
           <div className="my-4">
             <TextInput
+              invalidMessage={emailError}
+              invalid={!!emailError}
+              hint={isSignUp ? '' : 'Enter the email you used when signing up ✍️'}
               autoFocus
               placeholder="Email"
               type="email"
               value={email}
-              hasError={!!emailError}
-              errorMessage={emailError}
               label="Email"
               onChange={(e) => {
                 setEmail(e.target.value);
@@ -129,11 +148,12 @@ export default function Auth() {
           </div>
           <div className="my-4">
             <TextInput
+              invalidMessage={passwordError}
+              invalid={!!passwordError}
+              hint={isSignUp ? '' : 'Your very secret password 🤫'}
               placeholder="Password"
               type="password"
               value={password}
-              hasError={!!passwordError}
-              errorMessage={passwordError}
               label="Password"
               onChange={(e) => {
                 setPassword(e.target.value);
@@ -144,9 +164,9 @@ export default function Auth() {
           </div>
           <div className="flex items-center justify-center my-8 mx-0">
             <Button
-              className="w-40 h-14"
+              className="w-full"
+              size="lg"
               onClick={handleAuth}
-              intent="action"
               disabled={isLoading}
             >
               {isSignUp ? 'Sign Up' : 'Sign In'}
@@ -157,7 +177,7 @@ export default function Auth() {
               <span className="font-noto text-sm text-neutral-50">
                 {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
                 <span
-                  className="font-noto text-sm link"
+                  className="font-noto text-sm link whitespace-nowrap"
                   onClick={() => setIsSignUp(!isSignUp)}
                 >
                   {isSignUp ? `Sign In` : `Sign Up`}

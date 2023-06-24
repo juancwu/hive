@@ -1,3 +1,5 @@
+import type { TableName } from '@/lib/types/table-maps.types';
+
 export const PARTS_TABLE_KEY_ALIASES: Record<string, string> = {
   name: 'name',
   part: 'name',
@@ -9,13 +11,13 @@ export const PARTS_TABLE_KEY_ALIASES: Record<string, string> = {
   manufacturer: 'manufacturer',
 };
 
-export const PARTS_TABLE_VALUE_HANDLERS: Record<string, <T>(data: any) => T> = {
-  quantity: <T>(data: any) => data.quantity_in_stock as T,
-  name: <T>(data: any) => data.name as T,
-  id: <T>(data: any) => data.id as T,
-  description: <T>(data: any) => data.description as T,
-  datasheet: <T>(data: any) => data.datasheet as T,
-  manufacturer: <T>(data: any) => data.manufacturer as T,
+export const PARTS_TABLE_VALUE_HANDLERS: Record<string, (data: any) => any> = {
+  quantity: (data: any) => data.quantity_in_stock,
+  name: (data: any) => data.name,
+  id: (data: any) => data.id,
+  description: (data: any) => data.description,
+  datasheet: (data: any) => data.datasheet,
+  manufacturer: (data: any) => data.manufacturer,
 };
 
 export function getAliasForTableColumn(table: string, column: string) {
@@ -24,13 +26,19 @@ export function getAliasForTableColumn(table: string, column: string) {
   }
 }
 
-export function getValueFromData<T, R>(table: string, column: string, data: T) {
+export function getValueFromData<R>(
+  table: TableName,
+  column: string,
+  data: unknown
+): R | null | undefined {
   if (table === 'parts') {
     const alias = getAliasForTableColumn(table, column);
     if (!alias) {
       return null;
     }
 
-    return PARTS_TABLE_VALUE_HANDLERS[alias]<R>(data);
+    return PARTS_TABLE_VALUE_HANDLERS[alias](data);
   }
+
+  return null;
 }

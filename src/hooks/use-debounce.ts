@@ -1,6 +1,8 @@
+'use client';
+
 import { useRef } from 'react';
 
-export default function useDebounce<T extends unknown[], R = void>(
+export function useDebounce<T extends unknown[], R = void>(
   func: (...args: T) => R,
   delay: number
 ): [(...args: T) => Promise<R>, () => void] {
