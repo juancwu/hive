@@ -33,8 +33,8 @@ export const Default: TextInputStory = {
     label: 'Label',
     placeholder: 'Placeholder',
     disabled: false,
-    hasError: false,
-    errorMessage: 'Error message',
+    invalid: false,
+    invalidMessage: 'Error message',
   },
 };
 
@@ -43,8 +43,8 @@ export const Disabled: TextInputStory = {
     label: 'Disabled',
     placeholder: 'Placeholder',
     disabled: true,
-    hasError: false,
-    errorMessage: 'Error message',
+    invalid: false,
+    invalidMessage: 'Error message',
   },
 };
 
@@ -53,7 +53,7 @@ export const Error: TextInputStory = {
     label: 'Error',
     placeholder: 'Placeholder',
     disabled: false,
-    hasError: true,
-    errorMessage: 'Error message',
+    invalid: true,
+    invalidMessage: 'Error message',
   },
 };

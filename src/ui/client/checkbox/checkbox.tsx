@@ -37,4 +37,4 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>((props, ref)
   );
 });
 
-Checkbox.displayName = '@/ui/client/Checkbox';
+Checkbox.displayName = 'ui/client/Checkbox';

@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/ui/client/button';
 
 const meta: Meta<typeof Button> = {
@@ -72,14 +71,5 @@ export const Disabled: ButtonStory = {
     intent: 'primary',
     size: 'md',
     disabled: true,
-  },
-};
-
-export const IconButton: ButtonStory = {
-  args: {
-    children: 'Button',
-    intent: 'primary',
-    size: 'md',
-    icon: <CheckCircleIcon />,
   },
 };

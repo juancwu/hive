@@ -1,39 +1,30 @@
 'use client';
 
-import {
-  FC,
-  Fragment,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { FC, Fragment, createContext, useCallback, useContext, useState } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
+import Link from 'next/link';
+import { flushSync } from 'react-dom';
 import { getOperatingSystem } from '@/lib/helpers/browser';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { useEvent } from '@/hooks/use-event';
 import { useKeybind } from '@/hooks/use-keybind';
 import { useSupabase } from '@/providers';
 import { normalizeKey } from '@/hooks/use-keybind/parser';
-import Link from 'next/link';
-import { flushSync } from 'react-dom';
 
 type SearchActionsContextType = {
   onSelect: () => void;
 };
 
-export const SearchActionsContext = createContext<SearchActionsContextType>({
+const SearchActionsContext = createContext<SearchActionsContextType>({
   onSelect: () => ({}),
 });
 
-export function useSearchActionsContext() {
+function useSearchActionsContext() {
   const { onSelect } = useContext(SearchActionsContext);
   return onSelect;
 }
 
-export interface SearchResult {
+interface SearchResult {
   id: string;
   label: string;
   description: string;
@@ -48,8 +39,6 @@ interface SearchResultsProps {
   notFound: boolean;
   results: SearchResult[];
   queryNotFound?: string;
-  isLast?: boolean;
-  onLoadMore?: () => void;
 }
 
 interface SearchResultItemProps {
@@ -57,10 +46,11 @@ interface SearchResultItemProps {
 }
 
 interface SearchProps {
-  enabled: boolean;
+  /** Enable keybinding */
+  enableKeybind: boolean;
 }
 
-export const SearchResultItem: FC<SearchResultItemProps> = ({ item }) => {
+const SearchResultItem: FC<SearchResultItemProps> = ({ item }) => {
   const onSelect = useSearchActionsContext();
 
   return (
@@ -85,8 +75,6 @@ export const SearchResults: FC<SearchResultsProps> = ({
   notFound,
   results,
   queryNotFound,
-  isLast,
-  onLoadMore,
 }) => {
   if (notFound) {
     return (
@@ -109,46 +97,16 @@ export const SearchResults: FC<SearchResultsProps> = ({
       {results.map((item) => (
         <SearchResultItem key={item.href} item={item} />
       ))}
-      {results.length && isLast ? (
-        <div className="w-full">
-          <div className="block cursor-default px-4 py-3 ring-1 ring-white/5">
-            <div className="text-base font-normal text-white pointer-events-none">
-              <span>No more parts...</span>
-            </div>
-          </div>
-        </div>
-      ) : results.length ? (
-        <button
-          className="group focus:outline-none w-full border-none outline-none"
-          onClick={onLoadMore}
-        >
-          <div className="block cursor-pointer px-4 py-3 ring-1 ring-white/5 group-hover:bg-white/10 group-focus:bg-white/10 transition">
-            <div className="text-base font-normal text-white">
-              <span className="group-hover:text-amber-400 transition group-focus:text-amber-400">
-                Load More...
-              </span>
-            </div>
-          </div>
-        </button>
-      ) : null}
     </div>
   );
 };
 
-export const SearchInput = ({ placeholder = '' }: SearchInputProps) => {
+const SearchInput = ({ placeholder = '' }: SearchInputProps) => {
   const [query, setQuery] = useState('');
   const [queryNotFound, setQueryNotFound] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [notFound, setNotFound] = useState(false);
-  const [isLast, setIsLast] = useState(false);
-  const limit = useRef(4); // starting limiting index is from 0
-  const offset = useRef(0);
-  const page = useRef(1);
-  const pages = useRef(0);
-  const prevPage = useRef(0);
-  const nextPage = useRef(2);
-  const prevQuery = useRef('');
 
   const { supabase } = useSupabase();
 
@@ -162,16 +120,10 @@ export const SearchInput = ({ placeholder = '' }: SearchInputProps) => {
         setNotFound(false);
       }
       setQuery('');
-      offset.current = 0;
-      page.current = 1;
-      pages.current = 0;
-      prevPage.current = 0;
-      nextPage.current = 2;
-      prevQuery.current = '';
     });
   }, []);
 
-  const handleSearch = async (isLoadMore: boolean) => {
+  const handleSearch = async () => {
     if (loading) return;
 
     if (!query) {
@@ -179,44 +131,14 @@ export const SearchInput = ({ placeholder = '' }: SearchInputProps) => {
       return;
     }
 
-    if (prevQuery.current === query && page.current === prevPage.current) return;
-
     setLoading(true);
     setNotFound(false);
 
     try {
-      if (!pages.current) {
-        const { count, error } = await supabase
-          .from('parts')
-          .select('id', { count: 'exact', head: true })
-          .ilike('name', `%${query}%`);
-
-        if (error) {
-          console.error(error);
-        }
-
-        if (count && count > 0) {
-          // update the total amount of pages
-          pages.current = Math.ceil(count / limit.current);
-        }
-      }
-
-      if (prevQuery.current === query) {
-        offset.current = (page.current - 1) * limit.current;
-      } else {
-        offset.current = 0;
-        page.current = 1;
-        prevPage.current = 0;
-      }
-
       const { data: parts, error } = await supabase
         .from('parts')
         .select('id, name, description')
-        .ilike('name', `%${query}%`)
-        .range(
-          page.current < 2 ? offset.current : offset.current + 1,
-          offset.current + limit.current
-        );
+        .ilike('name', `%${query}%`);
 
       if (error) {
         // TODO: handle error using notification
@@ -224,18 +146,14 @@ export const SearchInput = ({ placeholder = '' }: SearchInputProps) => {
       }
 
       if (parts && parts.length) {
-        const newParts = parts.map((part) => ({
-          href: `/part/${part.id}`,
-          label: part.name,
-          id: part.id,
-          description: part.description,
-        }));
-        setResults(prevQuery.current !== query ? newParts : [...results, ...newParts]);
-        prevPage.current = page.current;
-        nextPage.current = page.current + 1;
-        prevQuery.current = query;
-      } else if (parts && isLoadMore) {
-        setIsLast(true);
+        setResults(
+          parts.map((part) => ({
+            href: `/part/${part.id}`,
+            label: part.name,
+            id: part.id,
+            description: part.description,
+          }))
+        );
       } else {
         resetSync();
       }
@@ -266,10 +184,9 @@ export const SearchInput = ({ placeholder = '' }: SearchInputProps) => {
 
             setQuery(event.target.value);
           }}
-          // onKeyUp={debouncedSearch}
           onKeyDown={(e) => {
             if (normalizeKey(e.key) === 'enter') {
-              handleSearch(false);
+              handleSearch();
             }
           }}
           value={query}
@@ -291,25 +208,18 @@ export const SearchInput = ({ placeholder = '' }: SearchInputProps) => {
         results={results}
         notFound={notFound}
         queryNotFound={queryNotFound}
-        isLast={isLast}
-        onLoadMore={() => {
-          if (page.current < pages.current) {
-            page.current += 1;
-            handleSearch(true);
-          }
-        }}
       />
     </div>
   );
 };
 
-export const Search: FC<SearchProps> = ({ enabled }) => {
+export const Search: FC<SearchProps> = ({ enableKeybind = true }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const isMac = getOperatingSystem() === 'mac';
   const handleHotkey = useEvent(() => setOpenDialog(!openDialog));
   useKeybind([isMac ? 'cmd' : 'ctrl', '/'], handleHotkey, {
     triggerInInput: true,
-    enabled,
+    enabled: enableKeybind,
   });
 
   const handleOnSelect = useEvent(() => setOpenDialog(false));

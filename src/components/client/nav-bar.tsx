@@ -1,18 +1,14 @@
 'use client';
 
 /** Packages */
-import { useState, Fragment } from 'react';
 import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
 import { usePathname } from 'next/navigation';
-import { Disclosure, Dialog, Transition } from '@headlessui/react';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { Disclosure } from '@headlessui/react';
 
 /** Local modules */
 import routes from '@/lib/routes';
 import { cva } from 'class-variance-authority';
-import { useKeybind } from '@/hooks/use-keybind';
-import { getOperatingSystem } from '@/lib/helpers/browser';
 import { useSupabase } from '@/providers';
 import { Search } from '@/components/client/search';
 
@@ -64,7 +60,7 @@ export const NavBar = () => {
               ))}
             </div>
           </div>
-          <Search enabled={!!session} />
+          {!!session && <Search enableKeybind />}
         </div>
       </div>
     </Disclosure>

@@ -52,6 +52,8 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>((props, re
     invalid,
     disabled,
     optional,
+    required,
+    type = 'text',
     ...rest
   } = props;
 
@@ -69,6 +71,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>((props, re
             className="block text-sm font-medium leading-6 text-white"
           >
             {label}
+            {required && <span className="text-red-500 cursor-default"> *</span>}
           </label>
         )}
         {optional && (
@@ -84,6 +87,8 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>((props, re
           aria-invalid={invalid ? 'true' : 'false'}
           aria-describedby={`${messageId} ${optionalTextId}`}
           className={twMerge(inputBaseStyles({ disabled, invalid }), className)}
+          required={required}
+          type={type}
           {...rest}
         />
         {invalid && (
@@ -101,4 +106,4 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>((props, re
   );
 });
 
-TextInput.displayName = '@/ui/client/text-input';
+TextInput.displayName = 'ui/client/text-input';
