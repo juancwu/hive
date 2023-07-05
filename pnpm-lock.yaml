@@ -29,6 +29,9 @@ dependencies:
   dayjs:
     specifier: ^1.11.7
     version: 1.11.7
+  klona:
+    specifier: ^2.0.6
+    version: 2.0.6
   next:
     specifier: 13.4.7
     version: 13.4.7(@babel/core@7.22.1)(react-dom@18.2.0)(react@18.2.0)
@@ -8619,7 +8622,6 @@ packages:
   /klona@2.0.6:
     resolution: {integrity: sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==}
     engines: {node: '>= 8'}
-    dev: true
 
   /language-subtag-registry@0.3.22:
     resolution: {integrity: sha512-tN0MCzyWnoz/4nHS6uxdlFWoUZT7ABptwKPQ52Ea7URk6vll88bWBVhodtnlfEuCcKWNGoc+uGbw1cwa9IKh/w==}

@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { flushSync } from 'react-dom';
 import { getOperatingSystem } from '@/lib/helpers/browser';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { useEvent } from '@/hooks/use-event';
 import { useKeybind } from '@/hooks/use-keybind';
 import { useSupabase } from '@/providers';
 import { normalizeKey } from '@/hooks/use-keybind/parser';
@@ -216,13 +215,13 @@ const SearchInput = ({ placeholder = '' }: SearchInputProps) => {
 export const Search: FC<SearchProps> = ({ enableKeybind = true }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const isMac = getOperatingSystem() === 'mac';
-  const handleHotkey = useEvent(() => setOpenDialog(!openDialog));
+  const handleHotkey = useCallback(() => setOpenDialog((current) => !current), []);
   useKeybind([isMac ? 'cmd' : 'ctrl', '/'], handleHotkey, {
     triggerInInput: true,
     enabled: enableKeybind,
   });
 
-  const handleOnSelect = useEvent(() => setOpenDialog(false));
+  const handleOnSelect = useCallback(() => setOpenDialog(false), []);
 
   return (
     <div className="hidden lg:flex lg:items-center lg:max-w-xs md:flex-1">

@@ -1,9 +1,8 @@
 'use client';
 
-import React, { FC, Fragment, useState } from 'react';
+import React, { FC, Fragment, useCallback, useState } from 'react';
 import { Button } from '@/ui/client/button';
 import { Dialog, Disclosure, Transition } from '@headlessui/react';
-import { useEvent } from '@/hooks/use-event';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { TextInput } from '@/ui/client/text-input';
 import { buttonStyles } from '@/styles/components/button.styles';
@@ -12,27 +11,31 @@ import { useKeybind } from '@/hooks/use-keybind';
 import { FileInput } from '@/ui/client/file-input';
 import { formatBytes } from '@/lib/helpers/format-bytes';
 import { ChevronUpIcon } from '@heroicons/react/24/outline';
+import { useForm } from '@/hooks/use-form';
 
 export const InventoryCreatePart: FC = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [datasheet, setDatasheet] = useState<File[]>([]);
-  const openPanel = useEvent(() => setIsOpen(true));
-  const closePanel = useEvent(() => setIsOpen(false));
-  const handleHotkey = useEvent(() => setIsOpen((current) => !current));
-  const onFileInputChange = useEvent((acceptedFiles: File[]) => {
+  const openPanel = useCallback(() => setIsOpen(true), []);
+  const closePanel = useCallback(() => setIsOpen(false), []);
+  const handleHotkey = useCallback(() => setIsOpen((current) => !current), []);
+  const onFileInputChange = useCallback((acceptedFiles: File[]) => {
     setDatasheet(acceptedFiles);
     return acceptedFiles;
-  });
-  const onFileInputRemove = useEvent((file: File) => {
+  }, []);
+  const onFileInputRemove = useCallback((file: File) => {
     setDatasheet((curr) => curr.filter((_file) => _file.name !== file.name));
-  });
-  const onFormSubmit = useEvent((e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(e);
-  });
+  }, []);
 
   useKeybind(['alt', 'n'], handleHotkey, {
     enabled: true,
+  });
+
+  const createPartForm = useForm({
+    initialValues: {
+      partName: '',
+      quantityInStock: 0,
+    },
   });
 
   return (
@@ -91,7 +94,11 @@ export const InventoryCreatePart: FC = () => {
                         </div>
                       </div>
                       <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                        <form onSubmit={onFormSubmit}>
+                        <form
+                          onSubmit={createPartForm.onSubmit((v) => {
+                            console.log(v);
+                          })}
+                        >
                           <div className="space-y-12">
                             <div className="border-b border-white/5 pb-12">
                               <h2 className="text-base font-semibold leading-7 text-white">
@@ -106,6 +113,7 @@ export const InventoryCreatePart: FC = () => {
                                     type="text"
                                     maxLength={80}
                                     required
+                                    {...createPartForm.getInputProps('partName')}
                                   />
                                 </div>
                                 <div className="col-span-full">
@@ -124,6 +132,7 @@ export const InventoryCreatePart: FC = () => {
                                     type="text"
                                     maxLength={10}
                                     required
+                                    {...createPartForm.getInputProps('quantityInStock')}
                                   />
                                 </div>
                                 <div className="col-span-full">
