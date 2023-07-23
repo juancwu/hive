@@ -36,7 +36,6 @@ export function useForm<Values extends Record<string, unknown>>({
     (field) => {
       const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
         setFieldValue(field, e.target.value as FieldValue<Values>);
-
       return {
         value: _values[field],
         onChange,

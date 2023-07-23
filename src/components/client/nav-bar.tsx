@@ -34,6 +34,14 @@ export const NavBar = () => {
   const pathname = usePathname();
   const { session } = useSupabase();
 
+  const o = {
+    this: {
+      that: {
+        then: () => 'here',
+      },
+    },
+  };
+
   return (
     <Disclosure as="nav" className="border-b-1 border-b-white border-opacity-5">
       <div className="pl-8 pr-8 mx-auto max-w-7xl">

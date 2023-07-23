@@ -6,18 +6,19 @@ export async function POST(request: Request) {
   if (AuthRes) return AuthRes;
 
   const data = await request.formData();
-  console.log(data);
+
+  console.log(data.get('datasheet'));
+
   const body = JSON.stringify({
-    message: HttpStatusMessage.Unauthorized,
-    body: data.get('name'),
+    message: 'Received!',
+    body: data.get('partName'),
   });
   const res = new Response(body, {
     headers: {
       'Content-Type': 'application/json',
       'Content-Length': body.length.toString(),
     },
-    status: HttpStatus.Unauthorized,
-    statusText: HttpStatusMessage.Unauthorized,
+    status: HttpStatus.Created,
   });
   return res;
 }

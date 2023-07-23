@@ -22,6 +22,8 @@ export type Field<Values> = LooseKeys<Values>;
 
 export type FieldValue<Values> = Values[keyof Values];
 
+// export type SupportedInputTypes = 'text' | 'file' | 'email' | 'password';
+
 export type GetInputProps<Values> = (field: Field<Values>) => GetInputPropsReturnType;
 
 export interface FormProps<Values> {

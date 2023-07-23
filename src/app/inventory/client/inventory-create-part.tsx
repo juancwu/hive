@@ -1,20 +1,27 @@
 'use client';
 
-import React, { FC, Fragment, useCallback, useState } from 'react';
+import React, { FC, Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { z } from 'zod';
 import { Button } from '@/ui/client/button';
 import { Dialog, Disclosure, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { TextInput } from '@/ui/client/text-input';
 import { buttonStyles } from '@/styles/components/button.styles';
+import { Alert } from '@/ui/client/alert';
 import { TextArea } from '@/ui/client/text-area';
 import { useKeybind } from '@/hooks/use-keybind';
 import { FileInput } from '@/ui/client/file-input';
 import { formatBytes } from '@/lib/helpers/format-bytes';
 import { ChevronUpIcon } from '@heroicons/react/24/outline';
 import { useForm } from '@/hooks/use-form';
+import { useSupabase } from '@/providers';
 
 export const InventoryCreatePart: FC = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [invalidQuantity, setInvalidQuantity] = useState(false);
+  const [invalidName, setInvalidName] = useState(false);
+  const [alertMsg, setAlerMsg] = useState('');
   const [datasheet, setDatasheet] = useState<File[]>([]);
   const openPanel = useCallback(() => setIsOpen(true), []);
   const closePanel = useCallback(() => setIsOpen(false), []);
@@ -26,17 +33,93 @@ export const InventoryCreatePart: FC = () => {
   const onFileInputRemove = useCallback((file: File) => {
     setDatasheet((curr) => curr.filter((_file) => _file.name !== file.name));
   }, []);
+  const nameInputRef = useRef<HTMLInputElement | null>(null);
 
   useKeybind(['alt', 'n'], handleHotkey, {
     enabled: true,
   });
 
-  const createPartForm = useForm({
+  const { supabase, currentUser } = useSupabase();
+
+  const initValues = useRef({
     initialValues: {
       partName: '',
       quantityInStock: 0,
+      manufacturer: '',
+      description: '',
     },
   });
+  const createPartForm = useForm(initValues.current);
+  const schema = useRef(
+    z.object({
+      partName: z
+        .string()
+        .min(1, 'Part name cannot be empty.')
+        .max(255, 'Part name cannot be longer than 255 characters.')
+        .trim(),
+      quantityInStock: z.coerce
+        .number()
+        .int('Quantity in stock must be an integer.')
+        .nonnegative('Quantity in stock must be >= 0.'),
+      manufacturer: z.string().default(''),
+      description: z.string().default(''),
+    })
+  );
+
+  const handleSubmit = async (values: typeof createPartForm.values) => {
+    if (!currentUser) return;
+
+    const validation = await schema.current.safeParseAsync(values);
+
+    if (!validation.success) {
+      setAlerMsg(validation.error.issues[0].message);
+      setShowAlert(true);
+
+      const invalidField = validation.error.issues[0].path[0];
+
+      if (invalidField === 'quantityInStock') setInvalidQuantity(true);
+      if (invalidField === 'name') setInvalidName(true);
+
+      return;
+    }
+
+    if (invalidQuantity) setInvalidQuantity(false);
+    if (invalidName) setInvalidName(false);
+
+    let datasheetPath = '';
+    if (datasheet.length) {
+      datasheetPath = `${currentUser.id}/${values.partName.replaceAll(
+        ' ',
+        '_'
+      )}_datasheet.pdf`;
+      const storage = 'datasheets';
+      const { data: uploadResult, error: storageError } = await supabase.storage
+        .from(storage)
+        .upload(datasheetPath, datasheet[0], {
+          contentType: 'application/pdf',
+        });
+
+      if (storageError) {
+        console.error(storageError.message);
+      }
+      console.log(uploadResult);
+    }
+
+    // send data directly in the front end to minimize traffic towards the backend
+    const { data, error } = await supabase.from('parts').insert([
+      {
+        user_id: currentUser.id,
+        name: validation.data.partName,
+        quantity_in_stock: validation.data.quantityInStock,
+        manufacturer: validation.data.manufacturer,
+        description: validation.data.description,
+        datasheet_url: datasheetPath,
+      },
+    ]);
+
+    if (error) console.error(error);
+    else console.log(data);
+  };
 
   return (
     <>
@@ -44,7 +127,12 @@ export const InventoryCreatePart: FC = () => {
         Create Part
       </Button>
       <Transition.Root show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closePanel}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={closePanel}
+          initialFocus={nameInputRef}
+        >
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300 transition-opacity"
@@ -94,13 +182,18 @@ export const InventoryCreatePart: FC = () => {
                         </div>
                       </div>
                       <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                        <form
-                          onSubmit={createPartForm.onSubmit((v) => {
-                            console.log(v);
-                          })}
-                        >
+                        <form onSubmit={createPartForm.onSubmit(handleSubmit)}>
                           <div className="space-y-12">
                             <div className="border-b border-white/5 pb-12">
+                              <div className="mb-6">
+                                <Alert
+                                  show={showAlert}
+                                  type="error"
+                                  text={alertMsg}
+                                  clearable
+                                  onDismiss={() => setShowAlert(false)}
+                                />
+                              </div>
                               <h2 className="text-base font-semibold leading-7 text-white">
                                 Basic Information
                               </h2>
@@ -112,16 +205,10 @@ export const InventoryCreatePart: FC = () => {
                                     name="name"
                                     type="text"
                                     maxLength={80}
+                                    invalid={invalidName}
+                                    ref={nameInputRef}
                                     required
                                     {...createPartForm.getInputProps('partName')}
-                                  />
-                                </div>
-                                <div className="col-span-full">
-                                  <TextArea
-                                    name="description"
-                                    label="Description"
-                                    hint="Write down details that can not be capture in the part name."
-                                    maxLength={500}
                                   />
                                 </div>
                                 <div className="sm:col-span-4">
@@ -131,8 +218,18 @@ export const InventoryCreatePart: FC = () => {
                                     name="quantityInStock"
                                     type="text"
                                     maxLength={10}
+                                    invalid={invalidQuantity}
                                     required
                                     {...createPartForm.getInputProps('quantityInStock')}
+                                  />
+                                </div>
+                                <div className="col-span-full">
+                                  <TextArea
+                                    name="description"
+                                    label="Description"
+                                    hint="Write down details that can not be capture in the part name."
+                                    maxLength={500}
+                                    {...createPartForm.getInputProps('description')}
                                   />
                                 </div>
                                 <div className="col-span-full">
@@ -157,6 +254,7 @@ export const InventoryCreatePart: FC = () => {
                                     name="manufacturer"
                                     maxLength={30}
                                     type="text"
+                                    {...createPartForm.getInputProps('manufacturer')}
                                   />
                                 </div>
                               </div>
